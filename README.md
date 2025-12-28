@@ -8,3 +8,4 @@ This project implements a rebase token using Solidity. A rebase token automatica
 
 - Automatic supply adjustment based on predefined conditions.
 - ERC20 compliant token with rebase functionality.
+- Later will upgrade to LP yield farming mechanism.
