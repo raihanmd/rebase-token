@@ -31,7 +31,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
   uint256 private constant PRECISION_FACTOR = 1e18;
 
-  uint256 private s_interestRate = 5e10;
+  uint256 private s_interestRate = (5 * PRECISION_FACTOR) / 1e8;
 
   mapping(address => uint256) s_userInterestRate;
   mapping(address => uint256) s_userLastUpdatedTimestamp;
@@ -114,14 +114,21 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
    * @notice Mints new tokens for a given address. Called when a user either deposits or bridges tokens to this chain.
    * @param _to The address to mint the tokens to.
    * @param _value The number of tokens to mint.
-   * @param _userInterestRate The interest rate of the user. This is either the contract interest rate if the user is depositing or the user's interest rate from the source token if the user is bridging.
    * @dev this function increases the total supply.
    */
-  function mint(address _to, uint256 _value, uint256 _userInterestRate) public onlyRole(MINT_BURN_ROLE) {
-    // Mints any existing interest that has accrued since the last time the user's balance was updated.
+  function mint(
+    address _to,
+    uint256 _value /**
+                    * , uint256 _userInterestRate
+                    */
+  )
+    public
+    onlyRole(MINT_BURN_ROLE)
+  {
     _mintAccruedInterest(_to);
-    // Sets the users interest rate to either their bridged value if they are bridging or to the current interest rate if they are depositing.
-    s_userInterestRate[_to] = _userInterestRate;
+    s_userInterestRate[_to] = /**
+     * _userInterestRate
+     */ s_interestRate;
     _mint(_to, _value);
   }
 
